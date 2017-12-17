@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8">
+
+    <title>Mooshimeter</title>
+  </head>
+
+  <body>
+    <!-- http://jquery.com -->
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery-ui.min.js"></script>
+    <!-- http://www.flotcharts.org -->
+    <script type="text/javascript" src="jquery.flot.js"></script>
+    <script type="text/javascript" src="jquery.flot.resize.js"></script>
+    <!-- https://github.com/nodeca/pako -->
+    <script type="text/javascript" src="pako_inflate.min.js"></script>
+    <!-- https://github.com/SheetJS/js-crc32 -->
+    <script type="text/javascript" src="crc32.js"></script>
+    <!-- https://github.com/alexei/sprintf.js -->
+    <script type="text/javascript" src="sprintf.min.js"></script>
+    <!-- https://github.com/d3/d3-queue -->
+    <script type="text/javascript" src="d3-queue.v3.min.js"></script>
+
+    <script type="text/javascript" src="mooshimeter.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="util.js"></script>
+
+    <script>
+      var ChromeSamples = {
+	  setStatus: function() {
+	      var line = Array.prototype.slice.call(arguments).map(function(argument) {
+		  return typeof argument === 'string' ? argument : JSON.stringify(argument);
+	      }).join(' ');
+
+	      $('#status').text(line);
+	  },
+
+	  clearStatus: function() {
+	      $('#status').text('');
+	  }
+      };
+      window.addEventListener('error', function(error) {
+	  $('#status').html(error.message);
+	  console.error(error);
+	  error.preventDefault();
+      });
+    </script>
+
+    </script>
+
+    <div id="outer">
+      <div id="buttons">
+	<div class="button"><button id="connect">Connect</button></div>
+	<div class="button"><button id="disconnect">Disconnect</button></div>
+	<div class="button"></div>
+	<div class="button" id="rateselect">Sample Rate
+	  <select id="rate"></select>
+	</div>
+	<div class="button" id="select">Sample Depth
+	  <select id="depth"></select>
+	</div>
+      </div>
+
+      <div id="statusouter">
+	<div id="statustitle">Status: </div>
+	<div id="status"></div>
+      </div>
+      <div id="output">
+	<div class="channel">
+	  <div class="channeltitleline">
+	    <div class="channeltitlespacer"></div>
+	    <div class="channeltitle">Channel 1</div>
+	    <div class="channeltitlespacer"></div>
+	    <div id="channel1select">Input
+	      <select id="channel1input">
+		<option value="temp">Internal Temperature</option>
+		<option value="currentdc">Current DC</option>
+		<option value="currentac">Current AC</option>
+		<option value="auxdc">Aux DC</option>
+		<option value="auxac">Aux AC</option>
+		<option value="resistance">Resistance</option>
+		<option value="diode">Diode</option>
+	      </select>
+	    </div>
+	    <div class="channeltitlespacer"></div>
+	    <div id="channel1range">Range
+	      <select id="channel1rangesel"></select>
+	    </div>
+	    <div class="channeltitlespacer"></div>
+	  </div>
+	  <div id="ch1value">-</div>
+	  <div class="graphcontainer"><div class="graph" id="ch1graph"></div></div>
+	</div>
+	<div class="channel">
+	  <div class="channeltitleline">
+	    <div class="channeltitlespacer"></div>
+	    <div class="channeltitle">Channel 2</div>
+	    <div class="channeltitlespacer"></div>
+	    <div id="channel2select">Input
+	      <select id="channel2input">
+		<option value="temp">Internal Temperature</option>
+		<option value="voltagedc">Voltage DC</option>
+		<option value="voltageac">Voltage AC</option>
+		<option value="auxdc">Aux DC</option>
+		<option value="auxac">Aux AC</option>
+		<option value="resistance">Resistance</option>
+		<option value="diode">Diode</option>
+	      </select>
+	    </div>
+	    <div class="channeltitlespacer"></div>
+	    <div id="channel2range">Range
+	      <select id="channel2rangesel"></select>
+	    </div>
+	    <div class="channeltitlespacer"></div>
+	  </div>
+	  <div id="ch2value">-</div>
+	  <div class="graphcontainer"><div class="graph" id="ch2graph"></div></div>
+	</div>
+      </div>
+
+      <table id="info"><tr>
+	  <th>PCB version</th>
+	  <th>Battery Voltage</th>
+	  <th>Name</th>
+	</tr>
+	<tr>
+	  <td><div id="pcbversion">-</div></td>
+	  <td><div id="batv">-</div></td>
+	  <td><div id="name">-</div></td>
+	</tr>
+      </table>
+    </div>
+    <script>
+      if (/Chrome\/(\d+\.\d+.\d+.\d+)/.test(navigator.userAgent)){
+	  // Let's log a warning if the sample is not supposed to execute on this
+	  // version of Chrome.
+	  if (48 > parseInt(RegExp.$1)) {
+	      ChromeSamples.setStatus('Warning! Keep in mind this sample has been tested with Chrome ' + 48 + '.');
+	  }
+      }
+    </script>
+
+    <script>
+      setStatus = ChromeSamples.setStatus;
+      $('#connect').click(function() {
+	  if (isWebBluetoothEnabled()) {
+	      ChromeSamples.clearStatus();
+	      mooshimain();
+	  }
+      });
+      $('#disconnect').click(mooshidisconnect);
+      mooshisetup(true);
+    </script>
+
+    <script>
+      function isWebBluetoothEnabled() {
+	  if (navigator.bluetooth) {
+	      return true;
+	  } else {
+	      ChromeSamples.setStatus('Web Bluetooth API is not available.\n' +
+				      'Please make sure the "Experimental Web Platform features" flag is enabled.');
+	      return false;
+	  }
+      }
+    </script>
+  </body>
+</html>

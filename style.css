@@ -1,0 +1,72 @@
+html, body {
+    height: 98%;
+}
+
+#outer {
+    display: flex;
+    flex-flow: column;
+    flex: 1 0 auto;
+    height: 100%;
+}
+
+#statusouter, #status, #statustitle {
+    display: flex;
+    flex-flow: row;
+}
+
+#buttons {
+    display: flex;
+    flex-flow: row wrap;
+    width: 50%;
+}
+
+.button {
+    display: flex;
+    flex-flow: row;
+    flex: 1 0 auto;
+}
+
+#output {
+    display: flex;
+    flex-flow: row wrap;
+    flex: 1 0 auto;
+}
+
+.channel {
+    display: flex;
+    flex-flow: column;
+    flex: 1 0 auto;
+}
+
+.channeltitle {
+    text-align: left;
+    font-size: 24px;
+}
+
+.channeltitleline {
+    display: flex;
+    flex-flow: row;
+}
+
+.channeltitlespacer {
+    display: flex;
+    flex-flow: row;
+    flex: 1 0 auto;
+}
+
+.graphcontainer, .graph {
+    flex: 1 0 auto;
+    display: flex;
+}
+
+#ch1value, #ch2value {
+    text-align: center;
+    font-size: 60px;
+    font-family: Monospace;
+}
+
+#info, #info tr, #info th, #info td {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 1px solid black;
+}
